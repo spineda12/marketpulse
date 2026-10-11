@@ -1,0 +1,11 @@
+backend/venv/
+frontend/node_modules/
+.DS_Store
+.env
+__pycache__/
+*.pyc
+.venv/
+.vscode/
+frontend/dist/
+.env.*
+!.env.example
