@@ -108,6 +108,38 @@ function App() {
 }, [selectedSymbol]);
 
 const latestBar = stock?.bars[stock.bars.length - 1];
+
+const chartData = (stock?.bars ?? []).map((bar, index, bars) => {
+  const window = bars.slice(Math.max(0, index - 29), index + 1);
+
+  return {
+    ...bar,
+    sma30:
+      window.length === 30
+        ? window.reduce((sum, item) => sum + item.close, 0) / 30
+        : null,
+  };
+});
+
+const recentBars = stock?.bars.slice(-30) ?? [];
+
+const movingAverage30 =
+  recentBars.length === 30
+    ? recentBars.reduce((sum, bar) => sum + bar.close, 0) / 30
+    : null;
+
+const averageComparison =
+  latestBar && movingAverage30 !== null
+    ? latestBar.close > movingAverage30
+      ? "Above average"
+      : latestBar.close < movingAverage30
+        ? "Below average"
+        : "At average"
+    : "Requires 30 trading days";
+
+
+
+
 const previousBar = stock?.bars[stock.bars.length - 2];
 
 const changePercent =
@@ -189,7 +221,7 @@ const changePercent =
     <div style={{ width: "100%", height: 320, minWidth: 0 }}>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart
-          data={stock.bars}
+          data={chartData}
           margin={{ top: 20, right: 30, bottom: 15, left: 10 }}
         >
           <CartesianGrid stroke="#334155" strokeDasharray="3 3" />
@@ -229,6 +261,18 @@ const changePercent =
             activeDot={{ r: 7 }}
             isAnimationActive={false}
           />
+          <Line
+              type="linear"
+              dataKey="sma30"
+              name="30-day average (USD)"
+              stroke="#fbbf24"
+              strokeWidth={2}
+              dot={false}
+              connectNulls={false}
+              isAnimationActive={false}
+          />
+
+          
         </LineChart>
       </ResponsiveContainer>
     </div>
@@ -249,9 +293,13 @@ const changePercent =
   </div>
 
   <div className="card">
-    <p>30-Day Average</p>
-    <h3>—</h3>
-    <span>Requires 30 trading days</span>
+    <p>30-Trading-Day Average</p>
+    <h3>
+      {movingAverage30 !== null
+        ? `$${movingAverage30.toFixed(2)}`
+        : "-"}
+    </h3>
+    <span>{averageComparison}</span>
   </div>
 
   <div className="card">
