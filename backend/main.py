@@ -90,6 +90,13 @@ def stock_history(symbol: str):
             status_code=502,
             detail="No usable price records were returned.",
         )
+    for index, bar in enumerate(bars):
+        if index < 29:
+            bar["sma30"] = None
+        else:
+            window = bars[index -29:index +1]
+            total = sum(item["close"] for item in window)
+            bar["sma30"] = total / 30
 
     return {
         "symbol": symbol,
