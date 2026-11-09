@@ -18,6 +18,7 @@ type PriceBar = {
   close: number;
   volume: number;
   sma30: number | null;
+  rsi14: number | null;
 };
 
 type StockHistory = {
@@ -145,6 +146,17 @@ const averageComparison =
 
 
 
+
+const rsi14 = latestBar?.rsi14 ?? null;
+
+const rsiLabel =
+  rsi14 === null
+    ? "Requires 15 trading days"
+    : rsi14 >= 70
+      ? "Overbought (70+)"
+      : rsi14 <= 30
+        ? "Oversold (30 or below)"
+        : "Neutral (30–70)";
 
 const previousBar = stock?.bars[stock.bars.length - 2];
 
@@ -293,9 +305,9 @@ const changePercent =
 
         <section className="cards">
   <div className="card">
-    <p>RSI</p>
-    <h3>—</h3>
-    <span>Not calculated yet</span>
+    <p>RSI (14-day)</p>
+    <h3>{rsi14 !== null ? rsi14.toFixed(1) : "—"}</h3>
+    <span>{rsiLabel}</span>
   </div>
 
   <div className="card">

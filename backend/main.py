@@ -5,6 +5,8 @@ import math
 
 import yfinance as yf
 
+from indicators import relative_strength_index, simple_moving_average
+
 app = FastAPI()
 
 app.add_middleware(
@@ -90,13 +92,13 @@ def stock_history(symbol: str):
             status_code=502,
             detail="No usable price records were returned.",
         )
-    for index, bar in enumerate(bars):
-        if index < 29:
-            bar["sma30"] = None
-        else:
-            window = bars[index -29:index +1]
-            total = sum(item["close"] for item in window)
-            bar["sma30"] = total / 30
+    closing_prices = [bar["close"] for bar in bars]
+    averages = simple_moving_average(closing_prices, period=30)
+    rsi_values = relative_strength_index(closing_prices, period=14)
+
+    for bar, average, rsi in zip(bars, averages, rsi_values):
+        bar["sma30"] = average
+        bar["rsi14"] = rsi
 
     return {
         "symbol": symbol,
