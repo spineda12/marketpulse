@@ -308,6 +308,11 @@ const changePercent =
     <p>RSI (14-day)</p>
     <h3>{rsi14 !== null ? rsi14.toFixed(1) : "—"}</h3>
     <span>{rsiLabel}</span>
+    <p className="card-note">
+      Measures how strongly the price has moved up vs. down over the last
+      14 trading days, on a 0–100 scale. Above 70 is often read as
+      overbought; below 30 as oversold.
+    </p>
   </div>
 
   <div className="card">
