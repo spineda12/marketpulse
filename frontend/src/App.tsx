@@ -17,6 +17,7 @@ type PriceBar = {
   low: number;
   close: number;
   volume: number;
+  sma30: number | null;
 };
 
 type StockHistory = {
@@ -109,24 +110,29 @@ function App() {
 
 const latestBar = stock?.bars[stock.bars.length - 1];
 
-const chartData = (stock?.bars ?? []).map((bar, index, bars) => {
-  const window = bars.slice(Math.max(0, index - 29), index + 1);
+const chartData = stock?.bars ?? [];
 
-  return {
-    ...bar,
-    sma30:
-      window.length === 30
-        ? window.reduce((sum, item) => sum + item.close, 0) / 30
-        : null,
-  };
-});
+//const chartData = (stock?.bars ?? []).map((bar, index, bars) => {
+  //const window = bars.slice(Math.max(0, index - 29), index + 1);
 
-const recentBars = stock?.bars.slice(-30) ?? [];
+  //return {
+    //...bar,
+    //sma30:
+      //window.length === 30
+        //? window.reduce((sum, item) => sum + item.close, 0) / 30
+        //: null,
+  //};
+//});
 
-const movingAverage30 =
+//const recentBars = stock?.bars.slice(-30) ?? [];
+
+/*const movingAverage30 =
   recentBars.length === 30
     ? recentBars.reduce((sum, bar) => sum + bar.close, 0) / 30
     : null;
+*/
+
+const movingAverage30 = latestBar?.sma30 ?? null;
 
 const averageComparison =
   latestBar && movingAverage30 !== null
